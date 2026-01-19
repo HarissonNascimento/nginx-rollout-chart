@@ -1,0 +1,51 @@
+{{- range $name, $c := .Values.components }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: nginx-{{ $name }}
+  labels:
+    app: nginx
+    component: {{ $name }}
+spec:
+  replicas: {{ $c.replicas }}
+
+  selector:
+    matchLabels:
+      app: nginx
+      component: {{ $name }}
+
+  strategy:
+    {{- if eq $c.strategy.type "canary" }}
+    canary:
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 30s
+        - setWeight: 100
+    {{- else if eq $c.strategy.type "bluegreen" }}
+    blueGreen:
+      activeService: nginx-{{ $name }}
+      previewService: nginx-{{ $name }}-preview
+      autoPromotionEnabled: true
+    {{- end }}
+
+  template:
+    metadata:
+      labels:
+        app: nginx
+        component: {{ $name }}
+    spec:
+      containers:
+        - name: nginx
+          image: {{ $c.image }}
+          ports:
+            - containerPort: {{ $c.port }}
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          configMap:
+            name: nginx-{{ $name }}-html
+---
+{{- end }}

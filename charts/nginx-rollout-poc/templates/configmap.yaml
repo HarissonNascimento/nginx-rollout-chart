@@ -1,0 +1,22 @@
+{{- range $name, $c := .Values.components }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-{{ $name }}-html
+  labels:
+    app: nginx
+    component: {{ $name }}
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Nginx {{ $name }}</title>
+      </head>
+      <body>
+        <h1>{{ $c.message }}</h1>
+        <p>Component: {{ $name }}</p>
+      </body>
+    </html>
+---
+{{- end }}

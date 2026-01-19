@@ -1,0 +1,34 @@
+{{- range $name, $c := .Values.components }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-{{ $name }}
+  labels:
+    app: nginx
+    component: {{ $name }}
+spec:
+  selector:
+    app: nginx
+    component: {{ $name }}
+  ports:
+    - port: {{ $c.port }}
+      targetPort: {{ $c.port }}
+---
+{{- if eq $c.strategy.type "bluegreen" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-{{ $name }}-preview
+  labels:
+    app: nginx
+    component: {{ $name }}
+spec:
+  selector:
+    app: nginx
+    component: {{ $name }}
+  ports:
+    - port: {{ $c.port }}
+      targetPort: {{ $c.port }}
+---
+{{- end }}
+{{- end }}
