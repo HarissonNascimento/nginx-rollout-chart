@@ -1,51 +1,39 @@
-{{- range $name, $c := .Values.components }}
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: nginx-{{ $name }}
-  labels:
-    app: nginx
-    component: {{ $name }}
+  name: {{ include "nginx-rollout-poc.fullname" . }}
 spec:
-  replicas: {{ $c.replicas }}
-
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: nginx
-      component: {{ $name }}
-
-  strategy:
-    {{- if eq $c.strategy.type "canary" }}
-    canary:
-      steps:
-        - setWeight: 50
-        - pause:
-            duration: 30s
-        - setWeight: 100
-    {{- else if eq $c.strategy.type "bluegreen" }}
-    blueGreen:
-      activeService: nginx-{{ $name }}
-      previewService: nginx-{{ $name }}-preview
-      autoPromotionEnabled: true
-    {{- end }}
+      app: {{ include "nginx-rollout-poc.name" . }}
 
   template:
     metadata:
       labels:
-        app: nginx
-        component: {{ $name }}
+        app: {{ include "nginx-rollout-poc.name" . }}
     spec:
       containers:
         - name: nginx
-          image: {{ $c.image }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
-            - containerPort: {{ $c.port }}
+            - containerPort: 80
           volumeMounts:
-            - name: html
+            - name: config
               mountPath: /usr/share/nginx/html
       volumes:
-        - name: html
+        - name: config
           configMap:
-            name: nginx-{{ $name }}-html
----
-{{- end }}
+            name: {{ include "nginx-rollout-poc.fullname" . }}
+
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: rollout-validation
+        - setWeight: 50
+        - pause: { duration: 30s } 
+        - setWeight: 100

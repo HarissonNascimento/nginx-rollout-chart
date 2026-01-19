@@ -1,0 +1,14 @@
+replicas: 2
+
+image:
+  repository: nginx
+  tag: "1.25"
+
+service:
+  port: 80
+
+config:
+  message: "default message"
+
+rollout:
+  strategy: canary
