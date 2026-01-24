@@ -3,10 +3,10 @@ kind: Rollout
 metadata:
   name: {{ include "nginx-rollout-poc.fullname" . }}
 spec:
+  replicas: {{ ".Values.replicas" | default 1 }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "nginx-rollout-poc.name" . }}
-
   template:
     metadata:
       labels:

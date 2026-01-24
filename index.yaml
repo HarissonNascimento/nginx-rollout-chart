@@ -3,7 +3,17 @@ entries:
   nginx-rollout-poc:
   - apiVersion: v2
     appVersion: "1.25"
-    created: "2026-01-19T02:22:24.375459017-03:00"
+    created: "2026-01-24T17:13:42.281515461-03:00"
+    description: Nginx Rollout PoC using Argo Rollouts
+    digest: 9b716da71915b971608733fcd730408ab682e40a3f96a3df287970150be5e9f3
+    name: nginx-rollout-poc
+    type: application
+    urls:
+    - https://harissonnascimento.github.io/nginx-rollout-chart/nginx-rollout-poc-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: "1.25"
+    created: "2026-01-24T17:13:42.281420002-03:00"
     description: Nginx Rollout PoC using Argo Rollouts
     digest: c4648d7e7dedfffd79f73b00a91ba15774060cf3aa48b3b3e33771fdeac4cf3a
     name: nginx-rollout-poc
@@ -13,7 +23,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: "1.25"
-    created: "2026-01-19T02:22:24.375379222-03:00"
+    created: "2026-01-24T17:13:42.28118013-03:00"
     description: Nginx Rollout PoC using Argo Rollouts
     digest: 1cfa32ee2f560ba070465e03d22604879bf9a57569c886ab3d4987a3f7ade1f6
     name: nginx-rollout-poc
@@ -23,7 +33,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: "1.25"
-    created: "2026-01-19T02:22:24.375300637-03:00"
+    created: "2026-01-24T17:13:42.280904813-03:00"
     description: Nginx Rollout PoC using Argo Rollouts
     digest: 65e9c67998dd517841789582555329f4885703207cfe35b47ca9d17e8ad6495f
     name: nginx-rollout-poc
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://harissonnascimento.github.io/nginx-rollout-chart/nginx-rollout-poc-0.0.1.tgz
     version: 0.0.1
-generated: "2026-01-19T02:22:24.375144767-03:00"
+generated: "2026-01-24T17:13:42.274975537-03:00"
