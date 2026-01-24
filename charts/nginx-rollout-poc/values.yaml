@@ -10,5 +10,10 @@ service:
 config:
   message: "default message"
 
-rollout:
-  strategy: canary
+workflow:
+  enabled: true
+
+  waves:
+    - replicas: 1
+    - replicas: 3
+    - replicas: 6

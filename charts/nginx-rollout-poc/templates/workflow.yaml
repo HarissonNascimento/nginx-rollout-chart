@@ -1,0 +1,41 @@
+{{- if .Values.workflow.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: {{ include "nginx-rollout-poc.fullname" . }}-waves
+spec:
+  entrypoint: rollout-waves
+  serviceAccountName: {{ include "nginx-rollout-poc.fullname" . }}-workflow
+
+  templates:
+    - name: rollout-waves
+      steps:
+{{- range $i, $wave := .Values.workflow.waves }}
+        - - name: wave-{{ add $i 1 }}
+            template: scale-rollout
+            arguments:
+              parameters:
+                - name: replicas
+                  value: "{{ $wave.replicas }}"
+
+        - - name: approve-wave-{{ add $i 1 }}
+            template: manual-approval
+{{- end }}
+
+    - name: scale-rollout
+      inputs:
+        parameters:
+          - name: replicas
+      container:
+        image: bitnami/kubectl
+        command: [sh, -c]
+        args:
+          - |
+            kubectl patch rollout {{ include "nginx-rollout-poc.fullname" . }} \
+              -n {{ .Release.Namespace }} \
+              --type merge \
+              -p '{"spec":{"replicas":{{ "{{" }}inputs.parameters.replicas{{ "}}" }}}}'
+
+    - name: manual-approval
+      suspend: {}
+{{- end }}

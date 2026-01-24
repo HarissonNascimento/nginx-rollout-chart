@@ -1,0 +1,27 @@
+{{- if .Values.workflow.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "nginx-rollout-poc.fullname" . }}-workflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "nginx-rollout-poc.fullname" . }}-workflow
+rules:
+  - apiGroups: ["argoproj.io"]
+    resources: ["rollouts"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "nginx-rollout-poc.fullname" . }}-workflow
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "nginx-rollout-poc.fullname" . }}-workflow
+roleRef:
+  kind: Role
+  name: {{ include "nginx-rollout-poc.fullname" . }}-workflow
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

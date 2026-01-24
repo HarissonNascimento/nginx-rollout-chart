@@ -26,13 +26,7 @@ spec:
             name: {{ include "nginx-rollout-poc.fullname" . }}
 
   strategy:
-    canary:
-      steps:
-        - setWeight: 20
-        - pause: { duration: 30s }
-        - analysis:
-            templates:
-              - templateName: {{ include "nginx-rollout-poc.fullname" . }}-validation
-        - setWeight: 50
-        - pause: { duration: 30s }
-        - setWeight: 100
+    blueGreen:
+      activeService: {{ include "nginx-rollout-poc.fullname" . }}-active
+      previewService: {{ include "nginx-rollout-poc.fullname" . }}-preview
+      autoPromotionEnabled: false
