@@ -1,5 +1,3 @@
-#remover esse replicas
-replicas: 2 
 image:
   repository: nginx
   tag: "1.25"
