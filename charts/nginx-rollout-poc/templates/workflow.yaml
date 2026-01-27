@@ -2,10 +2,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: {{ include "nginx-rollout-poc.fullname" . }}-waves-
+  generateName: ng-waves-
   annotations:
     argocd.argoproj.io/hook: PostSync
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
+  labels:
+    app.kubernetes.io/name: nginx-rollout-poc
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version }}
+    argocd.argoproj.io/application-name: {{ .Release.Name }}
 spec:
   entrypoint: rollout-waves
   serviceAccountName: {{ include "nginx-rollout-poc.fullname" . }}-workflow
@@ -33,10 +38,11 @@ spec:
         parameters:
           - name: replicas
       container:
-        image: bitnami/kubectl
+        image: bitnami/kubectl:latest
         command: [sh, -c]
         args:
           - |
+            echo "Aprovado. Escalando rollout para {{ "{{" }}inputs.parameters.replicas{{ "}}" }} replicas"
             kubectl patch rollout {{ include "nginx-rollout-poc.fullname" . }} \
               -n {{ .Release.Namespace }} \
               --type merge \
